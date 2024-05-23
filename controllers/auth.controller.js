@@ -34,12 +34,10 @@ export const login = async (req, res, next) => {
             name: existingUser.name 
         };
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY,{ expiresIn: "1d" });
+        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
         const { password:pass, ...rest } = existingUser._doc;
-        res.cookie('token', token, {
-            httpOnly: true
-        }).status(200).json(rest)
+        res.cookie('token', token, { httpOnly: true }).status(200).json(rest)
     } catch(error) {
        next(error);
     }
-}
+};
