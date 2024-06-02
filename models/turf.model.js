@@ -13,7 +13,7 @@ const turfSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    conatctNumber: {
+    contactNumber: {
         type: Number,
         required: true,
     },

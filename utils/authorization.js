@@ -20,6 +20,25 @@ export const adminAuthorization = (req, res, next) => {
   }
 };
 
+export const managerAuthorization = (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) return next(errorHandler(401, "Unauthorized"));
+
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+      if (user && user._doc.role === "manager") {
+        req.user = user;
+        next();
+      } else {
+        next(errorHandler(403, "Forbidden"))
+      };
+    });
+  } catch (error) {
+    next(error)
+  }
+};
+
 
 export const userAuthorization = (req, res, next) => {
   try {
