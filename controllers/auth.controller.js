@@ -3,14 +3,18 @@ import Users from '../models/user.model.js';
 import jwt from "jsonwebtoken";
 import { errorHandler } from '../utils/error.handler.js';
 
-export const signup = async (req, res, next) => {
+export const register = async (req, res, next) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new Users({ name, email, password: hashedPassword });
+        const newUser = new Users({ name, email, password: hashedPassword, role });
         await newUser.save();
-        res.status(201).json('User created successfully');
+        res.status(201).json({
+            success: true,
+            message: "User created sucessfully",
+            data: newUser
+        });
     } catch (error) {
         next(error);
     }

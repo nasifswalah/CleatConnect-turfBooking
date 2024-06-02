@@ -29,9 +29,6 @@ const turfSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    availableSlots: {
-        type: String,
-    },
     bookings: {
         type: [{
             type: mongoose.Schema.Types.ObjectId,
