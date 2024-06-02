@@ -1,4 +1,4 @@
-import { errorHandler } from "./error.handler";
+import { errorHandler } from "./error.handler.js";
 import jwt from "jsonwebtoken";
 
 export const adminAuthorization = (req, res, next) => {
