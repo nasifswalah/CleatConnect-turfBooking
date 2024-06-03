@@ -29,6 +29,10 @@ const turfSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    createdBy: {
+        type: String,
+        required: true,
+    },
     bookings: {
         type: [{
             type: mongoose.Schema.Types.ObjectId,

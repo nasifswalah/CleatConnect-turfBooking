@@ -10,7 +10,7 @@ export const getAllTurfData = async (req, res, next) => {
 
         return res.status(200).json({allTurfsData}); 
     } catch (error) {
-        next(errorHandler(500, error.message));
+        next(error);
     }
 };
 

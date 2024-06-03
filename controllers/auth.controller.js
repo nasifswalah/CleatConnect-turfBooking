@@ -32,15 +32,14 @@ export const login = async (req, res, next) => {
         if (!existingPassword) {
             return next(errorHandler(401, "Unauthorized"));
         };
+        existingUser.password = undefined;
+        const options = {
+            expiresIn:"2d",
+            algorithm:"HS256"
+        }
 
-        const payload = {
-            id: existingUser._id,
-            name: existingUser.name 
-        };
-
-        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-        const { password:pass, ...rest } = existingUser._doc;
-        res.cookie('token', token, { httpOnly: true }).status(200).json(rest)
+        const token = jwt.sign({...existingUser}, process.env.JWT_SECRET_KEY,options);
+        res.cookie('token', token, { httpOnly: true }).status(200).json(existingUser)
     } catch(error) {
        next(error);
     }
