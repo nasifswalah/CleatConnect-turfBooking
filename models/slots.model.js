@@ -14,12 +14,12 @@ const slotsSchema = mongoose.Schema({
         required: true
     },
     bookedBy:{
-        type: String,
-        required: true
+        type:mongoose.Types.ObjectId,
+        ref:'users'
     },
     turfId:{
-        type: String,
-        required: true  
+        type:mongoose.Types.ObjectId,
+        required:true
     }
 })
 
