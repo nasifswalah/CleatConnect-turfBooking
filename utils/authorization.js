@@ -12,12 +12,12 @@ export const adminAuthorization = (req, res, next) => {
         req.user = decodedToken._doc;
         next();
       } else {
-        next(errorHandler(403, "Forbidden"))
-      };
+        next(errorHandler(403, "Forbidden"));
+      }
     });
   } catch (error) {
     console.log(error);
-    next(error)
+    next(error);
   }
 };
 
@@ -32,14 +32,13 @@ export const managerAuthorization = (req, res, next) => {
         req.user = decodedToken._doc;
         next();
       } else {
-        next(errorHandler(403, "Forbidden"))
-      };
+        next(errorHandler(403, "Forbidden"));
+      }
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
-
 
 export const userAuthorization = (req, res, next) => {
   try {
@@ -52,10 +51,10 @@ export const userAuthorization = (req, res, next) => {
         req.user = decodedToken._doc;
         next();
       } else {
-        next(errorHandler(403, "Forbidden"))
-      };
+        next(errorHandler(403, "Forbidden"));
+      }
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
