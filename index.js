@@ -6,6 +6,7 @@ import connectDB  from './config/connectDB.js';
 import authRoute from "./routes/auth.routes.js";
 import adminRoute from "./routes/admin.route.js";
 import userRoute from "./routes/user.route.js";
+import managerRoute from "./routes/manager.route.js"
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use('/api/auth',authRoute);
 app.use('/api/admin',adminRoute);
 app.use('/api/user',userRoute);
+app.use('/api/manager',managerRoute);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;

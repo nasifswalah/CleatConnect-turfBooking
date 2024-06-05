@@ -35,7 +35,7 @@ export const getTimeSlots = async (req, res, next) => {
         let currentHour = 0;
         let currentDate = new Date(req.query.date);
         if (new Date(new Date().setUTCHours(0,0,0,0)) === currentDate) {
-            currentHour = new Date().setHours();
+            currentHour = new Date().getHours();
         }
 
         const availableSlots =  await Slots.aggregate([{
