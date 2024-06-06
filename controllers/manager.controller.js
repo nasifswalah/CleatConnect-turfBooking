@@ -1,3 +1,6 @@
+import Turfs from "../models/turf.model.js";
+import { errorHandler } from "../utils/error.handler.js";
+
 export const createTimeSlots = async (req, res, next) => {
   try {
     const { startDate, endDate, cost, bookedBy, turfId, newSlots } = req.body;
@@ -23,6 +26,20 @@ export const createTimeSlots = async (req, res, next) => {
     }
     await Slots.insertMany(slotObjects);
     res.status(201).json({ message: "New slot created successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const manageMyTurf = async (req, res, next) => {
+  try {
+    const myTurfData = await Turfs.find({manager: req.user.email});
+
+    if(!myTurfData){
+      return next(errorHandler(404, "Turf data not found"));
+    }
+
+    res.status(200).json(myTurfData);
   } catch (error) {
     next(error);
   }
