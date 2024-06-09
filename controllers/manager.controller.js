@@ -1,5 +1,6 @@
 import Turfs from "../models/turf.model.js";
 import { errorHandler } from "../utils/error.handler.js";
+import nodemailer from 'nodemailer';
 
 export const createTimeSlots = async (req, res, next) => {
   try {
@@ -44,3 +45,31 @@ export const manageMyTurf = async (req, res, next) => {
     next(error);
   }
 };
+
+export const bookingConfirmation = async (req, res, next) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.NODEMAILER_AUTH_ID,
+        pass: process.env.NODEMAILER_AUTH_PASSWORD
+      }
+    });
+
+    const mailOptions = {
+      from: `"CleatConnect" <${process.env.NODEMAILER_AUTH_ID}>`,
+      to: "nasifswalah@gmail.com",
+      subject: "Nodemailer testing",
+      text: "Nodemailer working"
+    }
+
+    const mail = await transporter.sendMail(mailOptions);
+    console.log('Message sent: %s', mail.messageId);
+    res.status(200).json("Confirmation mail has been send");
+    
+  } catch (error) {
+    next(error);
+  }  
+}
