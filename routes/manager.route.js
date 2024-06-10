@@ -5,7 +5,7 @@ import { managerAuthorization } from "../utils/authorization.js";
 const router = express.Router();
 
 router.post("/create-slot", managerAuthorization, createTimeSlots);
-router.post("/manage-my-turf", managerAuthorization, manageMyTurf);
+router.get("/manage-my-turf", managerAuthorization, manageMyTurf);
 router.post("/confirmation", /*managerAuthorization,*/ bookingConfirmation);
 
 export default router;

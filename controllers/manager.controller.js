@@ -1,17 +1,19 @@
+import Bookings from "../models/booking.model.js";
+import Slots from "../models/slots.model.js";
 import Turfs from "../models/turf.model.js";
 import { errorHandler } from "../utils/error.handler.js";
 import nodemailer from 'nodemailer';
 
 export const createTimeSlots = async (req, res, next) => {
   try {
-    const { startDate, endDate, cost, bookedBy, turfId, newSlots } = req.body;
+    const { startDate, endDate, cost, turfId, selectedSlots } = req.body;
 
     let from = new Date(new Date(startDate).setUTCHours(0, 0, 0, 0));
     let to = new Date(new Date(endDate).setUTCHours(0, 0, 0, 0));
     const slotObjects = [];
 
-    while (from <= to) {
-      for (let slotData of newSlots) {
+    while (from < to) {
+      for (let slotData of selectedSlots) {
         slotObjects.push({
           date: JSON.parse(JSON.stringify(from)),
           slot: {
@@ -20,13 +22,16 @@ export const createTimeSlots = async (req, res, next) => {
           },
           cost,
           turfId,
-          bookedBy,
         });
       }
-      from.setDate(from.getDate() + 1);
+      from.setDate(from.getDate()+1);
     }
-    await Slots.insertMany(slotObjects);
-    res.status(201).json({ message: "New slot created successfully" });
+    const newSlots = await Slots.insertMany(slotObjects);
+    res.status(201).json({
+      success: true,
+      message: "New slots added successfully",
+      data: newSlots
+    });
   } catch (error) {
     next(error);
   }
@@ -40,11 +45,33 @@ export const manageMyTurf = async (req, res, next) => {
       return next(errorHandler(404, "Turf data not found"));
     }
 
-    res.status(200).json(myTurfData);
+    res.status(200).json({
+      success: true,
+      data: myTurfData
+    });
   } catch (error) {
     next(error);
   }
 };
+
+export const listBookings = async (req, res, next) => {
+  try {
+    const turfId = req.body;
+    const turfBookings = await Bookings.find(turfId);
+
+    if(!turfBookings) {
+      return next(errorHandler(404, "Bookings are empty"));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Bookings are listed successfully",
+      data: turfBookings
+    })
+  } catch (error) {
+    
+  }
+}
 
 export const bookingConfirmation = async (req, res, next) => {
   try {

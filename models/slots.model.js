@@ -19,13 +19,14 @@ const slotsSchema = mongoose.Schema({
   },
   turfId: {
     type: mongoose.Types.ObjectId,
-    required: true,
+    ref: "turf"
   },
   orderId: {
     type: mongoose.Types.ObjectId,
     ref: "booking",
   },
-});
+}
+);
 
 const Slots = mongoose.model("slot", slotsSchema);
 export default Slots;

@@ -3,6 +3,7 @@ import crypto from "crypto";
 import Slots from "../models/slots.model.js";
 import { errorHandler } from "../utils/error.handler.js";
 import Bookings from "../models/booking.model.js";
+import Turfs from "../models/turf.model.js";
 
 export const bookings = async (req, res, next) => {
   try {
@@ -25,6 +26,8 @@ export const bookings = async (req, res, next) => {
       bookedBy: req.user._id,
       totalCost: totalCost,
     }).save();
+
+    await Turfs.findByAndUpdate(turfId, {$push: { bookings: newBooking._id}})
 
     const instance = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,

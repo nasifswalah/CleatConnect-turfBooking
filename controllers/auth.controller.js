@@ -5,14 +5,14 @@ import { errorHandler } from "../utils/error.handler.js";
 
 export const register = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, contactNumber, role } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = new Users({ name, email, password: hashedPassword, role });
+    const newUser = new Users({ name, email, password: hashedPassword, role, contactNumber });
     await newUser.save();
     res.status(201).json({
       success: true,
-      message: "User created sucessfully",
+      message: `${role} created sucessfully`,
       data: newUser,
     });
   } catch (error) {
@@ -49,7 +49,11 @@ export const login = async (req, res, next) => {
     res
       .cookie("token", token, { httpOnly: true })
       .status(200)
-      .json(existingUser);
+      .json({
+        success: true,
+        message: `${existingUser.role} logged in successfully`,
+        data: existingUser
+      });
   } catch (error) {
     next(error);
   }

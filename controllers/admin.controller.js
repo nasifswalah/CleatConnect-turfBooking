@@ -1,55 +1,14 @@
-import { storage } from "../config/firebase.config.js";
-import { v4 as uuidv4 } from "uuid";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Turfs from "../models/turf.model.js";
-import Slots from "../models/slots.model.js";
 import { errorHandler } from "../utils/error.handler.js";
 
 export const createTurf = async (req, res, next) => {
   try {
-    const {
-      name,
-      location,
-      description,
-      contactNumber,
-      turfType,
-      manager,
-      bookings,
-      createdBy,
-    } = req.body;
-
-    let imageUrls = [];
-
-    if (req.files && req.files.length > 0) {
-      for (let file of req.files) {
-        const filename = `${uuidv4()}-${file.originalname}`;
-        const storageRef = ref(storage, filename);
-        const metadata = { contentType: file.mimetype };
-
-        const snapshot = await uploadBytes(storageRef, file.buffer, metadata);
-        const downloadUrl = await getDownloadURL(snapshot.ref);
-        imageUrls.push(downloadUrl);
-      }
-    }
-    const turfData = {
-      name,
-      location,
-      description,
-      contactNumber,
-      turfType,
-      manager,
-      bookings,
-      createdBy,
-      imageUrls,
-    };
-
-    const newTurf = await Turfs.create(turfData);
-
-    return res.status(201).json({
+    const turfData = await Turfs.create(req.body);
+    res.status(201).json({
       success: true,
       message: "Turf created successfully",
-      data: newTurf,
-    });
+      data: turfData
+    })
   } catch (error) {
     next(error);
   }
@@ -72,11 +31,16 @@ export const updateTurf = async (req, res, next) => {
       req.body,
       { new: true }
     );
-    res.status(200).json(updatedTurfData);
+    res.status(200).json({
+      success: true,
+      message: "Turf data updated successfully",
+      data: updatedTurfData
+    });
   } catch (error) {
     next(error);
   }
 };
+
 
 export const deleteTurf = async (req, res, next) => {
   try {
@@ -85,13 +49,19 @@ export const deleteTurf = async (req, res, next) => {
     if (!turfData) {
       return next(errorHandler(404, "Turf not found"));
     }
+    console.log(turfData.createdBy);
+    console.log(req.user._id);
 
-    if (req.user._id !== turfData.createdBy) {
+    if (req.user._id !== turfData.createdBy.toString()) {
       return next(errorHandler(401, "You cannot delete this turf"));
     }
 
     const deletedTurf = await Turfs.findByIdAndDelete(req.params.id);
-    res.status(200).json("Turf deleted successfully");
+    res.status(200).json({
+      success: true,
+      message: "Turf deleted successfully",
+      data: deletedTurf
+    });
   } catch (error) {
     next(error);
   }
@@ -107,7 +77,10 @@ export const getMyTurfs = async (req, res, next) => {
       );
     }
 
-    res.status(200).json(myTurfs);
+    res.status(200).json({
+      success: true,
+      data: myTurfs
+    });
   } catch (error) {
     next(error);
   }

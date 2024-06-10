@@ -17,6 +17,7 @@ const turfSchema = mongoose.Schema(
     contactNumber: {
       type: Number,
       required: true,
+      min: 10
     },
     turfType: {
       type: String,
@@ -31,13 +32,13 @@ const turfSchema = mongoose.Schema(
       required: true,
     },
     createdBy: {
-      type: String,
-      required: true,
+      type: mongoose.Types.ObjectId,
+      ref: "user",
     },
     bookings: {
       type: [
         {
-          type: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Types.ObjectId,
           ref: "booking",
         },
       ],
