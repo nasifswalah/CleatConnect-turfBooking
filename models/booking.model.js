@@ -2,13 +2,11 @@ import mongoose from "mongoose";
 
 const bookingSchema = mongoose.Schema({
   bookedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    type: String,
     required: true,
   },
   turfId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "turf",
+    type: String,
     required: true,
   },
   timeSlotIds: {
@@ -19,16 +17,18 @@ const bookingSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
-  bookingDate: {
+  bookingDate:{
     type: Date,
-    default: new Date(),
   },
   paymentStatus: {
     type: String,
     required: true,
   },
-});
+},
+{ timestamps: true},
+);
 
 const Bookings = mongoose.model("booking", bookingSchema);
 
 export default Bookings;
+

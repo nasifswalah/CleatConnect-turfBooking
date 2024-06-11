@@ -7,10 +7,10 @@ import Turfs from "../models/turf.model.js";
 
 export const bookings = async (req, res, next) => {
   try {
-    const { bookedBy, turfId, timeSlotIds } = req.body;
+    const { turfId, timeSlotIds } = req.body;
 
     const slotData = await Slots.find({ _id: { $in: timeSlotIds } });
-    const totalCost = 0;
+    let totalCost = 0;
 
     for (let slot of slotData) {
       if (slot.bookedBy) {
@@ -25,9 +25,10 @@ export const bookings = async (req, res, next) => {
       timeSlotIds,
       bookedBy: req.user._id,
       totalCost: totalCost,
+      paymentStatus: "Pending",
     }).save();
 
-    await Turfs.findByAndUpdate(turfId, {$push: { bookings: newBooking._id}})
+    await Turfs.findByIdAndUpdate(turfId, {$push: { bookings: newBooking._id}})
 
     const instance = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
@@ -44,8 +45,12 @@ export const bookings = async (req, res, next) => {
     if (!booking) {
       return next(errorHandler(500, "Error on creating booking"));
     }
-
-    res.status(200).json(booking);
+    console.log(newBooking);
+    res.status(200).json({
+      success: true,
+      message: "Booking placed successfully",
+      data: booking
+    });
   } catch (error) {
     next(error);
   }
@@ -61,7 +66,7 @@ export const verify = async (req, res, next) => {
       receipt,
       timeSlotIds,
       turfId,
-      bookingDate,
+      bookingDate
     } = req.body;
 
     const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET_KEY);
@@ -84,7 +89,7 @@ export const verify = async (req, res, next) => {
           paymentStatus: "Paid",
           bookedBy: req.user._id,
           turfId: turfId,
-          bookingDate: new Date(date),
+          bookingDate: new Date(bookingDate),
         },
       }
     );

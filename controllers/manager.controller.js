@@ -1,6 +1,7 @@
 import Bookings from "../models/booking.model.js";
 import Slots from "../models/slots.model.js";
 import Turfs from "../models/turf.model.js";
+import Users from "../models/user.model.js";
 import { errorHandler } from "../utils/error.handler.js";
 import nodemailer from 'nodemailer';
 
@@ -58,8 +59,8 @@ export const manageMyTurf = async (req, res, next) => {
 
 export const listBookings = async (req, res, next) => {
   try {
-    const turfId = req.body;
-    const turfBookings = await Bookings.find(turfId);
+    const {turfId} = req.body;
+    const turfBookings = await Bookings.find({turfId: turfId});
 
     if(!turfBookings) {
       return next(errorHandler(404, "Bookings are empty"));
@@ -77,6 +78,38 @@ export const listBookings = async (req, res, next) => {
 
 export const bookingConfirmation = async (req, res, next) => {
   try {
+    const {userName, userEmail, totalCost, turfName, bookedSlots} = req.body;
+
+    const text = `
+  Hello ${userName},
+
+  Thank you for your booking!
+
+  Booking Details:
+  - Turf: ${turfName}
+  - Time: ${bookedSlots}
+  - Amount Paid: ${totalCost}
+
+  We look forward to seeing you!
+
+  Best regards,
+  Cleat Connect
+  `;
+
+  // HTML version of the email
+  const html = `
+  <p>Hello ${userName},</p>
+  <p>Thank you for your booking!</p>
+  <p><strong>Booking Details:</strong></p>
+  <ul>
+    <li><strong>Turf:</strong> ${turfName}</li>
+    <li><strong>Time:</strong> ${bookedSlots}</li>
+    <li><strong>Amount Paid:</strong> ${totalCost}</li>
+  </ul>
+  <p>We look forward to seeing you!</p>
+  <p>Best regards,<br><strong>Cleat Connect</strong></p>
+  `;
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       port: 465,
@@ -88,10 +121,11 @@ export const bookingConfirmation = async (req, res, next) => {
     });
 
     const mailOptions = {
-      from: `"CleatConnect" <${process.env.NODEMAILER_AUTH_ID}>`,
-      to: "nasifswalah@gmail.com",
-      subject: "Nodemailer testing",
-      text: "Nodemailer working"
+      from: `"Cleat Connect" <${process.env.NODEMAILER_AUTH_ID}>`,
+      to: userEmail,
+      subject: "Cleat Connect - Booking confirmation",
+      text: text,
+      html: html
     }
 
     const mail = await transporter.sendMail(mailOptions);

@@ -18,7 +18,8 @@ const slotsSchema = mongoose.Schema({
     ref: "user",
   },
   turfId: {
-   type: String
+   type: String,
+   required: true
   },
   orderId: {
     type: mongoose.Types.ObjectId,

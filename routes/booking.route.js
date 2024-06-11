@@ -4,7 +4,7 @@ import { userAuthorization } from "../utils/authorization.js";
 
 const router = express.Router();
 
-router.post("/booking", userAuthorization, bookings);
+router.post("/book-slot", userAuthorization, bookings);
 router.post("/verify-booking", userAuthorization, verify);
 
 export default router;

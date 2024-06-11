@@ -12,7 +12,7 @@ export const register = async (req, res, next) => {
     await newUser.save();
     res.status(201).json({
       success: true,
-      message: `${role} created sucessfully`,
+      message: `${newUser.role} created sucessfully`,
       data: newUser,
     });
   } catch (error) {
