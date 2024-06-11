@@ -1,7 +1,7 @@
 import Slots from "../models/slots.model.js";
 import Turfs from "../models/turf.model.js";
 import { errorHandler } from "../utils/error.handler.js";
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 
 export const getAllTurfData = async (req, res, next) => {
   try {
@@ -10,7 +10,10 @@ export const getAllTurfData = async (req, res, next) => {
       return next(errorHandler(404, "Turfs are not found"));
     }
 
-    return res.status(200).json({ allTurfsData });
+    return res.status(200).json({
+      success: true,
+      data: allTurfsData,
+    });
   } catch (error) {
     next(error);
   }
@@ -19,13 +22,19 @@ export const getAllTurfData = async (req, res, next) => {
 export const getSelectedTurfData = async (req, res, next) => {
   try {
     const turfId = req.params.id;
-    const turfData = await Turfs.findById(turfId);
+    const turfData = await Turfs.findOne({ _id: turfId });
     if (!turfData) {
       return next(errorHandler(404, "Turf not found"));
     }
 
-    return res.status(200).json({ turfData });
-  } catch (error) {}
+    return res.status(200).json({
+      success: true,
+      message: "Selected turf details are listed below",
+      data: turfData,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getTimeSlots = async (req, res, next) => {
@@ -39,9 +48,9 @@ export const getTimeSlots = async (req, res, next) => {
     const availableSlots = await Slots.aggregate([
       {
         $match: {
-          turfId: new mongoose.Types.ObjectId(req.query.turfId),
+          turfId: req.query.turfId,
           date: currentDate,
-          "slot.id": { $gte: currentHour },
+          'slot.id': { $gte: currentHour },
         },
       },
       {
@@ -55,7 +64,11 @@ export const getTimeSlots = async (req, res, next) => {
       },
     ]);
 
-    res.status(200).json(availableSlots);
+    res.status(200).json({
+      success: true,
+      message: "Slots are listed here",
+      data: availableSlots
+    });
   } catch (error) {
     next(error);
   }

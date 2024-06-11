@@ -8,11 +8,13 @@ export const createTimeSlots = async (req, res, next) => {
   try {
     const { startDate, endDate, cost, turfId, selectedSlots } = req.body;
 
-    let from = new Date(new Date(startDate).setUTCHours(0, 0, 0, 0));
-    let to = new Date(new Date(endDate).setUTCHours(0, 0, 0, 0));
+    let from = new Date(new Date(startDate).setUTCHours(0,0,0,0));
+    let to = new Date(new Date(endDate).setUTCHours(0,0,0,0));
     const slotObjects = [];
 
-    while (from < to) {
+    from.setDate(from.getDate()+1);
+    
+    while (from <= to) {
       for (let slotData of selectedSlots) {
         slotObjects.push({
           date: JSON.parse(JSON.stringify(from)),

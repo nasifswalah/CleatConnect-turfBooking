@@ -18,8 +18,7 @@ const slotsSchema = mongoose.Schema({
     ref: "user",
   },
   turfId: {
-    type: mongoose.Types.ObjectId,
-    ref: "turf"
+   type: String
   },
   orderId: {
     type: mongoose.Types.ObjectId,
@@ -29,4 +28,5 @@ const slotsSchema = mongoose.Schema({
 );
 
 const Slots = mongoose.model("slot", slotsSchema);
+slotsSchema.index({date:1,'slot.id':1,turfId:1},{unique:true})
 export default Slots;
