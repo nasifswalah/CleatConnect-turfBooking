@@ -24,7 +24,7 @@ const turfSchema = mongoose.Schema(
       required: true,
     },
     imageUrls: {
-      type: [String],
+      type: Array,
       required: true,
     },
     manager: {
